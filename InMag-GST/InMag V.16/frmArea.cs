@@ -78,6 +78,7 @@ namespace InMag_V._16
             if (lblID.Text.Trim() == "")
             {
                 //Insert
+
                 if (txtArea.Text.Trim() == "")
                     MessageBox.Show("Please enter the area");
                 else
