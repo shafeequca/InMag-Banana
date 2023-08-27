@@ -374,6 +374,7 @@
             this.ItemGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ItemGrid.Size = new System.Drawing.Size(854, 297);
             this.ItemGrid.TabIndex = 66;
+            this.ItemGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ItemGrid_CellContentClick);
             // 
             // contextMenuStrip1
             // 
@@ -703,9 +704,9 @@
             this.SearchGrid.AllowUserToResizeRows = false;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.SearchGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.SearchGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.SearchGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.SearchGrid.BackgroundColor = System.Drawing.Color.Gainsboro;
             this.SearchGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;

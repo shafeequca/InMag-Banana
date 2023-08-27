@@ -342,7 +342,7 @@ namespace InMag_V._16
             {
                 Type t = typeof(System.Windows.Forms.SystemInformation);
 
-                string query = "select ROW_NUMBER() OVER(ORDER BY id) AS Row,itemcode,itemid,itemname,Nos,Kg,Less,TotLess,qty,rate,total from tblTemp;";
+                string query = "select ROW_NUMBER() OVER(ORDER BY id) AS Row,itemcode,itemid,itemname,Nos,Kg,Less,TotLess,qty,rate,total,id from tblTemp;";
                 ItemGrid.DataSource = Connections.Instance.ShowDataInGridView(query);
                 ItemGrid.Columns[0].Width = 35;
                 ItemGrid.Columns[1].Width = 0;// txtItemcode.Width;//86;
@@ -361,6 +361,7 @@ namespace InMag_V._16
                     ItemGrid.FirstDisplayedScrollingRowIndex = ItemGrid.RowCount - 1;
                     ItemGrid.Rows[ItemGrid.RowCount - 1].Selected = true;
                 }
+                ItemGrid.Columns[11].Width = 0;
                 query = "select sum(total) from tblTemp";
                 DataTable dt = (DataTable)Connections.Instance.ShowDataInGridView(query);
                 if (dt.Rows.Count > 0)
@@ -483,7 +484,7 @@ namespace InMag_V._16
                 {
                     string query = "select Current_Stock,minRate from tblItem where itemId='" + txtItems.Tag.ToString() + "'";
                     DataTable dt = (DataTable)Connections.Instance.ShowDataInGridView(query);
-                    query = "select qty from tblTemp where itemId='" + txtItems.Tag.ToString() + "'";
+                    query = "select qty from tblTemp where Id='" + cmdItemClear.Tag.ToString() + "'";
                     DataTable dt1 = (DataTable)Connections.Instance.ShowDataInGridView(query);
                     if (Convert.ToDouble(dt.Rows[0][1].ToString()) > Convert.ToDouble(txtRate.Text == "" ? "0" : txtRate.Text))
                     {
@@ -495,54 +496,27 @@ namespace InMag_V._16
                         return;
                     
                     }
-                    
+
                     if (dt1.Rows.Count > 0)
                     {
                         if (txtBillno.Tag == null)
                         {
-                            if (txtItemcode.Tag == null)
-                            {
-                                double newQty = Convert.ToDouble(txtQuantity.Text == "" ? "0" : txtQuantity.Text) + Convert.ToDouble(dt1.Rows[0][0].ToString());
-                                double newTotal = newQty * Convert.ToDouble(txtRate.Text == "" ? "0" : txtRate.Text);
-                                if (Convert.ToDouble(dt.Rows[0][0].ToString()) < newQty)
-                                {
-                                    DialogResult dialogResult = MessageBox.Show("No sufficient stock." + Environment.NewLine + "Do you want to continue with negative stock?", "Sale Voucher", MessageBoxButtons.YesNo);
-                                    if (dialogResult == DialogResult.Yes)
-                                        query = "update tblTemp set Qty='" + newQty + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + newTotal + "' where itemId='" + txtItems.Tag.ToString() + "'";
-                                }
-                                else
-                                    query = "update tblTemp set Qty='" + newQty + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + newTotal + "' where itemId='" + txtItems.Tag.ToString() + "'";
-                            }
-                            else
+                            if (txtItemcode.Tag != null)
                             {
                                 if (Convert.ToDouble(dt.Rows[0][0].ToString()) < Convert.ToDouble(txtQuantity.Text == "" ? "0" : txtQuantity.Text))
                                 {
                                     DialogResult dialogResult = MessageBox.Show("No sufficient stock." + Environment.NewLine + "Do you want to continue with negative stock?", "Sale Voucher", MessageBoxButtons.YesNo);
                                     if (dialogResult == DialogResult.Yes)
-                                        query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where itemId='" + Convert.ToDouble(txtItemcode.Tag.ToString()) + "'";
+                                        query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where Id='" + cmdItemClear.Tag.ToString() + "'"; 
                                 }
                                 else
-                                    query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where itemId='" + Convert.ToDouble(txtItemcode.Tag.ToString()) + "'";
+                                    query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where Id='" + cmdItemClear.Tag.ToString() + "'";
+
                             }
                         }
                         else
                         {
-                            if (txtItemcode.Tag == null)
-                            {
-                                double newQty = Convert.ToDouble(txtQuantity.Text == "" ? "0" : txtQuantity.Text) + Convert.ToDouble(dt1.Rows[0][0].ToString());
-                                double newTotal = newQty * Convert.ToDouble(txtRate.Text == "" ? "0" : txtRate.Text);
-                                query = "select qty from tblSaleTrans where itemId='" + txtItems.Tag.ToString() + "' and saleId='" + txtBillno.Tag.ToString() + "'";
-                                DataTable dt2 = (DataTable)Connections.Instance.ShowDataInGridView(query);
-                                if (Convert.ToDouble(dt.Rows[0][0].ToString()) < (newQty-Convert.ToDouble(dt2.Rows[0][0].ToString())))
-                                {
-                                    DialogResult dialogResult = MessageBox.Show("No sufficient stock." + Environment.NewLine + "Do you want to continue with negative stock?", "Sale Voucher", MessageBoxButtons.YesNo);
-                                    if (dialogResult == DialogResult.Yes)
-                                        query = "update tblTemp set Qty='" + newQty + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + newTotal + "' where itemId='" + txtItems.Tag.ToString() + "'";
-                                }
-                                else
-                                    query = "update tblTemp set Qty='" + newQty + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + newTotal + "' where itemId='" + txtItems.Tag.ToString() + "'";
-                            }
-                            else
+                            if (txtItemcode.Tag != null)
                             {
                                 query = "select qty from tblSaleTrans where itemId='" + txtItems.Tag.ToString() + "' and saleId='" + txtBillno.Tag.ToString() + "'";
                                 DataTable dt2 = (DataTable)Connections.Instance.ShowDataInGridView(query);
@@ -550,11 +524,12 @@ namespace InMag_V._16
                                 {
                                     DialogResult dialogResult = MessageBox.Show("No sufficient stock." + Environment.NewLine + "Do you want to continue with negative stock?", "Sale Voucher", MessageBoxButtons.YesNo);
                                     if (dialogResult == DialogResult.Yes)
-                                        query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where itemId='" + Convert.ToDouble(txtItemcode.Tag.ToString()) + "'";
+                                        query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where Id='" + cmdItemClear.Tag.ToString() + "'";
                                 }
                                 else
-                                    query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where itemId='" + Convert.ToDouble(txtItemcode.Tag.ToString()) + "'";
+                                    query = "update tblTemp set Qty='" + Convert.ToDouble(txtQuantity.Text.Trim() == "" ? "0" : txtQuantity.Text) + "',rate='" + Convert.ToDouble(txtRate.Text.Trim() == "" ? "0" : txtRate.Text) + "',total='" + Convert.ToDouble(txtTotal.Text.Trim() == "" ? "0" : txtTotal.Text) + "',Nos='" + Convert.ToInt32(txtNos.Text.Trim() == "" ? "0" : txtNos.Text) + "',Kg='" + Convert.ToDouble(txtKg.Text.Trim() == "" ? "0" : txtKg.Text) + "',Less='" + Convert.ToDouble(txtLess.Text.Trim() == "" ? "0" : txtLess.Text) + "',TotLess='" + Convert.ToDouble(txtTotLess.Text.Trim() == "" ? "0" : txtTotLess.Text) + "' where Id='" + cmdItemClear.Tag.ToString() + "'";
                             }
+
                         }
                     }
                     else
@@ -566,7 +541,7 @@ namespace InMag_V._16
                             DataTable dt3 = (DataTable)Connections.Instance.ShowDataInGridView(query);
                             exQty = Convert.ToDouble(dt.Rows[0][0].ToString());
                         }
-                        if (Convert.ToDouble(dt.Rows[0][0].ToString()) < (Convert.ToDouble(txtQuantity.Text == "" ? "0" : txtQuantity.Text)-exQty))
+                        if (Convert.ToDouble(dt.Rows[0][0].ToString()) < (Convert.ToDouble(txtQuantity.Text == "" ? "0" : txtQuantity.Text) - exQty))
                         {
                             DialogResult dialogResult = MessageBox.Show("No sufficient stock." + Environment.NewLine + "Do you want to continue with negative stock?", "Sale Voucher", MessageBoxButtons.YesNo);
                             if (dialogResult == DialogResult.Yes)
@@ -586,6 +561,7 @@ namespace InMag_V._16
         private void cmdItemClear_Click(object sender, EventArgs e)
         {
             txtItemcode.Tag = null;
+            cmdItemClear.Tag = "";
             txtItemcode.Enabled = true;
             txtItemcode.Text ="";
             txtItems.Enabled = true;
@@ -617,6 +593,7 @@ namespace InMag_V._16
                     txtItems.Text = ItemGrid.Rows[rowno].Cells[3].Value.ToString();
                     txtItemcode.Text = ItemGrid.Rows[rowno].Cells[1].Value.ToString();
                     txtItems.Tag = ItemGrid.Rows[rowno].Cells[2].Value.ToString();
+                    cmdItemClear.Tag = ItemGrid.Rows[rowno].Cells[11].Value.ToString();
                     txtNos.Text = ItemGrid.Rows[rowno].Cells[4].Value.ToString();
                     txtKg.Text = ItemGrid.Rows[rowno].Cells[5].Value.ToString();
                     txtLess.Text = ItemGrid.Rows[rowno].Cells[6].Value.ToString();
@@ -631,7 +608,7 @@ namespace InMag_V._16
                 }
                 else if (item.Name == "Delete")
                 {
-                    string query = "delete from tblTemp where itemId='" + ItemGrid.Rows[rowno].Cells[2].Value.ToString() + "'";
+                    string query = "delete from tblTemp where id='" + ItemGrid.Rows[rowno].Cells[11].Value.ToString() + "'";
                     Connections.Instance.ExecuteQueries(query);
                     GridShow();
                 }
@@ -701,6 +678,7 @@ namespace InMag_V._16
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtBillno.Tag = null;
+            cmdItemClear.Tag = "";
             chkInterState.Checked = false;
             string creditType = System.Configuration.ConfigurationSettings.AppSettings["DefaultCreditType"];
             if (creditType.ToUpper() == "CASH")
@@ -1222,6 +1200,7 @@ namespace InMag_V._16
                 int r = ItemDisplayGrid.CurrentRow.Index;
                 txtItems.Tag = ItemDisplayGrid.Rows[r].Cells[0].Value.ToString();
                 txtItemcode.Text = ItemDisplayGrid.Rows[r].Cells[1].Value.ToString();
+                cmdItemClear.Tag = "";
                 txtRate.Text = ItemDisplayGrid.Rows[r].Cells[3].Value.ToString();
                 if (chkWholeSale.Checked == true)
                     txtRate.Text = ItemDisplayGrid.Rows[r].Cells[4].Value.ToString();
@@ -1560,5 +1539,9 @@ namespace InMag_V._16
             }
         }
 
+        private void ItemGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
